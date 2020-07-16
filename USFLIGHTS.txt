@@ -1,0 +1,56 @@
+#1. Quantitat de registres de la taula de vols:#
+SELECT count(*) as total FROM usairlineflights2.flights;
+
+#2. Retard promig de sortida i arribada segons l’aeroport origen#
+
+ SELECT origin, avg(ArrDelay) as prom_arribades, avg(DepDelay) as prom_sortides FROM usairlineflights2.flights
+ group by origin
+ order by origin;
+
+
+#3. Retard promig d’arribada dels vols, per mesos, anys i segons l’aeroport origen. 
+#A més, volen que els resultat es mostrin de la següent forma (fixa’t en l’ordre de les files):#
+
+SELECT origin, colYear, colMonth, avg(ArrDelay) as prom_arribades FROM usairlineflights2.flights
+group by origin, colYear, colMonth
+order by origin;
+
+
+#4. Retard promig d’arribada dels vols, per mesos, anys i segons l’aeroport origen (mateixa consulta que abans i amb el mateix ordre). 
+#Però a més, ara volen que en comptes del codi de l’aeroport es mostri el nom de la ciutat.#
+
+SELECT City, colYear, colMonth, avg(ArrDelay) as prom_arribades FROM usairlineflights2.flights left join usairlineflights2.usairports on  origin = iata
+group by City, colYear, colMonth
+order by city;
+
+#5. Les companyies amb més vols cancelats, per mesos i any. 
+#A més, han d’estar ordenades de forma que les companyies amb més cancel·lacions apareguin les primeres.#
+
+SELECT UniqueCarrier, colYear, colMonth, avg(ArrDelay) as avg_delay, sum(Cancelled) as total_cancelled FROM usairlineflights2.flights
+where Cancelled > 0
+group by UniqueCarrier, colYear, colMonth
+order by total_cancelled desc;
+
+
+
+#6. L’identificador dels 10 avions que més distància han recorregut fent vols.#
+
+SELECT TailNum, sum(Distance) as totalDistance FROM usairlineflights2.flights
+where TailNum != ""
+group by TailNum
+order by totalDistance desc
+limit 10;
+
+
+
+#7. Companyies amb el seu retard promig només d’aquelles les quals els seus vols 
+#arriben al seu destí amb un retràs promig major de 10 minuts.#
+
+SELECT UniqueCarrier, avg(arrDelay)as avgDelay FROM usairlineflights2.flights
+group by UniqueCarrier
+having avgDelay > 10
+order by avgDelay desc;
+
+
+
+
